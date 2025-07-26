@@ -1,0 +1,26 @@
+vendor/
+.DS_Store
+
+# PHPUnit
+.phpunit.result.cache
+.phpunit.cache/
+
+# Composer
+composer.phar
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.*
+!.env.example

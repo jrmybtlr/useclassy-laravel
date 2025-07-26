@@ -25,55 +25,59 @@ class UseClassyServiceProvider extends ServiceProvider
     private function transformUseClassySyntax($value)
     {
         // Step 1: Transform class:modifier="value" to the modifier classes
-        $pattern = '/\bclass:(\w+)=(["\'`])([^"\'`]*)\2/';
+        $pattern = '/\bclass:([\w:]+)=(["\'`])([^"\'`]*)\2/';
         
         $value = preg_replace_callback($pattern, function ($matches) {
             $modifier = $matches[1];
             $classes = $matches[3];
             
             // Transform each class with the modifier prefix
-            $transformedClasses = array();
+            $transformedClasses = [];
             foreach (explode(' ', trim($classes)) as $class) {
                 if (!empty($class)) {
-                    $transformedClasses[] = $modifier . ':' . $class;
+                    $transformedClasses[] = "{$modifier}:{$class}";
                 }
             }
             
             $modifierClasses = implode(' ', $transformedClasses);
             
             // Return as a temporary marker to be merged later
-            return '__USECLASSY_MODIFIER__' . $modifierClasses . '__USECLASSY_END__';
+            return "__USECLASSY_MODIFIER__{$modifierClasses}__USECLASSY_END__";
         }, $value);
         
-        // Step 2: Find elements with both class attributes and modifier markers, then merge them
+        // Step 2: Process each HTML element that contains markers
         $value = preg_replace_callback(
-            '/(<[^>]*)\bclass=(["\'`])([^"\'`]*)\2([^>]*__USECLASSY_MODIFIER__[^>]*>)/',
+            '/(<[^>]*>)/',
             function ($matches) {
-                $beforeClass = $matches[1];
-                $quote = $matches[2];
-                $existingClasses = $matches[3];
-                $afterClass = $matches[4];
+                $element = $matches[1];
+                
+                // Check if this element has modifier markers
+                if (!preg_match('/__USECLASSY_MODIFIER__/', $element)) {
+                    return $element;
+                }
                 
                 // Extract all modifier classes from this element
-                preg_match_all('/__USECLASSY_MODIFIER__([^_]*)__USECLASSY_END__/', $afterClass, $modifierMatches);
+                preg_match_all('/__USECLASSY_MODIFIER__([^_]*)__USECLASSY_END__/', $element, $modifierMatches);
                 $allModifierClasses = implode(' ', $modifierMatches[1]);
                 
                 // Remove the modifier markers
-                $cleanAfterClass = preg_replace('/__USECLASSY_MODIFIER__[^_]*__USECLASSY_END__/', '', $afterClass);
+                $cleanElement = preg_replace('/__USECLASSY_MODIFIER__[^_]*__USECLASSY_END__/', '', $element);
                 
-                // Combine existing and modifier classes
-                $combinedClasses = trim($existingClasses . ' ' . $allModifierClasses);
-                
-                return $beforeClass . 'class=' . $quote . $combinedClasses . $quote . $cleanAfterClass;
-            },
-            $value
-        );
-        
-        // Step 3: Handle any remaining modifier markers (elements without existing class attributes)
-        $value = preg_replace_callback(
-            '/__USECLASSY_MODIFIER__([^_]*)__USECLASSY_END__/',
-            function ($matches) {
-                return 'class="' . $matches[1] . '"';
+                // Check if element already has a class attribute
+                if (preg_match('/\bclass=(["\'`])([^"\'`]*)\1/', $cleanElement, $classMatches)) {
+                    $quote = $classMatches[1];
+                    $existingClasses = $classMatches[2];
+                    $combinedClasses = trim("{$existingClasses} {$allModifierClasses}");
+                    
+                    return preg_replace(
+                        '/\bclass=(["\'`])([^"\'`]*)\1/',
+                        "class={$quote}{$combinedClasses}{$quote}",
+                        $cleanElement
+                    );
+                } else {
+                    // Add class attribute before the closing >
+                    return preg_replace('/(\s*)>$/', " class=\"{$allModifierClasses}\">", $cleanElement);
+                }
             },
             $value
         );
