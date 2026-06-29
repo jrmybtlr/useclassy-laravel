@@ -46,6 +46,9 @@
     "config": {
         "platform": {
             "php": "8.2.0"
+        },
+        "audit": {
+            "block-insecure": false
         }
     },
     "minimum-stability": "stable",
