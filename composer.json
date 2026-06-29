@@ -16,13 +16,13 @@
         }
     ],
     "require": {
-        "php": "^8.1",
-        "illuminate/support": "^10.0|^11.0|^12.0",
-        "illuminate/view": "^10.0|^11.0|^12.0"
+        "php": "^8.2",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "illuminate/view": "^11.0|^12.0|^13.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.0|^11.0",
-        "orchestra/testbench": "^8.0|^9.0|^10.0",
+        "phpunit/phpunit": "^11.0|^12.0",
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
         "mockery/mockery": "^1.4",
         "laravel/pint": "^1.0"
     },
@@ -41,6 +41,11 @@
             "providers": [
                 "UseClassy\\Laravel\\UseClassyServiceProvider"
             ]
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "8.2.0"
         }
     },
     "minimum-stability": "stable",
