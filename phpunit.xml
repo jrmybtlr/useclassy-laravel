@@ -10,7 +10,6 @@
          failOnRisky="true"
          failOnEmptyTestSuite="true"
          beStrictAboutOutputDuringTests="true"
-         verbose="true"
          timeoutForSmallTests="60"
          timeoutForMediumTests="10"
          timeoutForLargeTests="60">

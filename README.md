@@ -38,12 +38,12 @@ This package hooks into Laravel's Blade compiler to transform the UseClassy synt
 
 - Hot module reloading
 - Blade caching
-- All Laravel versions 10+
+- Laravel 11, 12, and 13
 
 ## Requirements
 
-- PHP ^8.1
-- Laravel ^10.0|^11.0|^12.0
+- PHP ^8.2
+- Laravel ^11.0|^12.0|^13.0
 
 ## License
 
