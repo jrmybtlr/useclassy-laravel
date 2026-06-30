@@ -66,6 +66,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          fetch-tags: true
 
       - name: Create and push tag
         run: |
@@ -73,8 +74,8 @@ jobs:
           TAG="v${VERSION}"
 
           if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG already exists."
-            exit 1
+            echo "Tag $TAG already exists, skipping creation."
+            exit 0
           fi
 
           git config user.name "github-actions[bot]"
@@ -106,6 +107,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          fetch-tags: true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
