@@ -17,7 +17,9 @@ final class BladeClassModifierTransformer
 
     public function transform(string $value): string
     {
-        $pattern = '/\bclass:([\w:]+)=(["\'`])([^"\'`]*)\2/';
+        // Parity with vite-plugin-useclassy: lookbehind avoids :class / someclass false
+        // positives; [\w:-]+ allows hyphenated modifiers (group-hover, focus-within, etc.).
+        $pattern = '/(?<![:\w])class:([\w:-]+)=(["\'`])([^"\'`]*)\2/';
 
         $value = preg_replace_callback($pattern, function (array $matches): string {
             $modifier = $matches[1];
