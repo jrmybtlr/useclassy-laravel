@@ -206,4 +206,42 @@ class UseClassyServiceProviderTest extends TestCase
 
         $this->assertEquals($expected, $result);
     }
+
+    public function test_transform_hyphenated_modifiers(): void
+    {
+        $t = $this->transformer();
+
+        $this->assertEquals(
+            '<div class="group-hover:bg-blue-100">Content</div>',
+            $t->transform('<div class:group-hover="bg-blue-100">Content</div>')
+        );
+
+        $this->assertEquals(
+            '<div class="focus-within:ring-2">Content</div>',
+            $t->transform('<div class:focus-within="ring-2">Content</div>')
+        );
+
+        $this->assertEquals(
+            '<div class="peer-focus:opacity-100">Content</div>',
+            $t->transform('<div class:peer-focus="opacity-100">Content</div>')
+        );
+    }
+
+    public function test_transform_does_not_match_class_substring_in_larger_word(): void
+    {
+        $input = '<div someclass:hover="text-blue-500">Content</div>';
+
+        $result = $this->transformer()->transform($input);
+
+        $this->assertEquals($input, $result);
+    }
+
+    public function test_transform_does_not_match_colon_prefixed_class_hover(): void
+    {
+        $input = '<div :class:hover="text-blue-500">Content</div>';
+
+        $result = $this->transformer()->transform($input);
+
+        $this->assertEquals($input, $result);
+    }
 }
