@@ -5,6 +5,7 @@
         "laravel",
         "blade",
         "tailwind",
+        "unocss",
         "css",
         "useclassy"
     ],

@@ -244,4 +244,35 @@ class UseClassyServiceProviderTest extends TestCase
 
         $this->assertEquals($input, $result);
     }
+
+    public function test_transform_named_group_and_container_query_modifiers(): void
+    {
+        $t = $this->transformer();
+
+        $this->assertEquals(
+            '<div class="group-hover/item:bg-red-500">Content</div>',
+            $t->transform('<div class:group-hover/item="bg-red-500">Content</div>')
+        );
+
+        $this->assertEquals(
+            '<div class="@md:p-4">Content</div>',
+            $t->transform('<div class:@md="p-4">Content</div>')
+        );
+
+        $this->assertEquals(
+            '<div class="p-4 group-hover/item:opacity-100 @md:p-8"  >Content</div>',
+            $t->transform('<div class="p-4" class:group-hover/item="opacity-100" class:@md="p-8">Content</div>')
+        );
+    }
+
+    public function test_transform_chained_modifiers_emit_full_chain_only(): void
+    {
+        $result = $this->transformer()->transform(
+            '<div class:sm:hover="underline">Content</div>'
+        );
+
+        $this->assertEquals('<div class="sm:hover:underline">Content</div>', $result);
+        $this->assertStringNotContainsString('class="sm:underline', $result);
+        $this->assertStringNotContainsString(' hover:underline', $result);
+    }
 }
