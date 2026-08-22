@@ -17,9 +17,10 @@ final class BladeClassModifierTransformer
 
     public function transform(string $value): string
     {
-        // Parity with vite-plugin-useclassy: lookbehind avoids :class / someclass false
-        // positives; [\w:-]+ allows hyphenated modifiers (group-hover, focus-within, etc.).
-        $pattern = '/(?<![:\w])class:([\w:-]+)=(["\'`])([^"\'`]*)\2/';
+        // Parity with vite-plugin-useclassy CLASS_MODIFIER_NAME_PATTERN: lookbehind
+        // avoids :class / someclass false positives; [\w/:@-]+ allows hyphens
+        // (group-hover), named groups (group-hover/item), and container queries (@md).
+        $pattern = '#(?<![:\w])class:([\w/:@-]+)=(["\'`])([^"\'`]*)\2#';
 
         $value = preg_replace_callback($pattern, function (array $matches): string {
             $modifier = $matches[1];
